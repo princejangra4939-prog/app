@@ -11,12 +11,16 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-line: '20'
+          node-version: '20'
+
+      - name: Create Project Files
+        run: |
+          mkdir -p www
+          mv index.html www/
+          echo '{"name": "my-app", "version": "1.0.0", "dependencies": {}}' > package.json
 
       - name: Install Mobile Tools
         run: |
-          mkdir www
-          mv index.html www/
           npm install @capacitor/core @capacitor/cli
           npx cap init "My App" "com.yourname.myapp" --web-dir=www
           npm install @capacitor/android
