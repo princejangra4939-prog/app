@@ -21,7 +21,7 @@ jobs:
 
       - name: Generate Native Application Settings
         run: |
-          rm -rf www android package.json package-lock.json capacitor.config.json
+          rm -rf www android package.json package-lock.json capacitor.config.json assets
           mkdir -p www
           cp index.html www/index.html
           echo '{"name": "htmlapp", "version": "1.0.0", "dependencies": {}}' > package.json
@@ -30,19 +30,20 @@ jobs:
       - name: Install Mobile Build Packages
         run: |
           npm install @capacitor/core@5 @capacitor/cli@5 @capacitor/android@5
-          npm install -g @capacitor/assets
+          npm install @capacitor/assets@3 --save-dev
 
       - name: Inject Android Studio Core Platform
         run: npx cap add android
 
-      - name: Automatically Generate Logos from icon.png
+      - name: Force Construct and Generate System Icons
         run: |
           if [ -f "icon.png" ]; then
             mkdir -p assets
             cp icon.png assets/icon.png
             npx capacitor-assets generate --android
+            cp -r assets/android/mipmap-* android/app/src/main/res/
           else
-            echo "No custom icon found, using default logo"
+            echo "Icon file not found in main directory"
           fi
 
       - name: Synchronize Asset Directories
