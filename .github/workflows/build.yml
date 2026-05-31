@@ -18,7 +18,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-   
+
       - name: Generate Native Application Settings
         run: |
           rm -rf www android package.json package-lock.json capacitor.config.json
@@ -29,25 +29,21 @@ jobs:
 
       - name: Install Mobile Build Packages
         run: |
-          npm install @capacitor/core@5 @capacitor/cli@5
-          npm install @capacitor/android@5
+          npm install @capacitor/core@5 @capacitor/cli@5 @capacitor/android@5
+          npm install -g @capacitor/assets
 
       - name: Inject Android Studio Core Platform
         run: npx cap add android
 
-      - name: Apply Custom App Icon Logos
+      - name: Automatically Generate Logos from icon.png
         run: |
-          cp -r mipmap-* android/app/src/main/res/
-
-       
-
-      - name: Install Mobile Build Packages
-        run: |
-          npm install @capacitor/core@5 @capacitor/cli@5
-          npm install @capacitor/android@5
-
-      - name: Inject Android Studio Core Platform
-        run: npx cap add android
+          if [ -f "icon.png" ]; then
+            mkdir -p assets
+            cp icon.png assets/icon.png
+            npx capacitor-assets generate --android
+          else
+            echo "No custom icon found, using default logo"
+          fi
 
       - name: Synchronize Asset Directories
         run: npx cap sync
