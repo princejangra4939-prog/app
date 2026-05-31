@@ -18,14 +18,28 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-
+   
       - name: Generate Native Application Settings
         run: |
           rm -rf www android package.json package-lock.json capacitor.config.json
           mkdir -p www
           cp index.html www/index.html
           echo '{"name": "htmlapp", "version": "1.0.0", "dependencies": {}}' > package.json
-          echo '{"appId": "com.cleanhtmlapp.app", "appName": "My Clean App", "webDir": "www"}' > capacitor.config.json
+          echo '{"appId": "com.warppaiwarden.tictactoe", "appName": "TIC TAC TOE", "webDir": "www"}' > capacitor.config.json
+
+      - name: Install Mobile Build Packages
+        run: |
+          npm install @capacitor/core@5 @capacitor/cli@5
+          npm install @capacitor/android@5
+
+      - name: Inject Android Studio Core Platform
+        run: npx cap add android
+
+      - name: Apply Custom App Icon Logos
+        run: |
+          cp -r mipmap-* android/app/src/main/res/
+
+       
 
       - name: Install Mobile Build Packages
         run: |
