@@ -13,18 +13,17 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Create Project Files
+      - name: Prepare Project Structure
         run: |
           mkdir -p www
-          mv index.html www/
-          echo '{"name": "my-app", "version": "1.0.0", "dependencies": {}}' > package.json
+          cp index.html www/index.html
+          echo '{"name": "clean-html-app", "version": "1.0.0", "dependencies": {}}' > package.json
+          echo '{"appId": "com.cleanhtmlapp.app", "appName": "My App", "webDir": "www"}' > capacitor.config.json
 
-      - name: Install Mobile Tools
+      - name: Install Tools Non-Interactively
         run: |
-          npm install @capacitor/core @capacitor/cli
-          npx cap init "My App" "com.yourname.myapp" --web-dir=www
-          npm install @capacitor/android
-          npx cap add android
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npx cap add android --confirm
           npx cap sync
 
       - name: Setup Java
@@ -33,12 +32,13 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Build APK with Gradle
+      - name: Build Pure APK with Gradle
         run: |
           cd android
+          chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload Clean APK
+      - name: Upload Clean Ad-Free APK
         uses: actions/upload-artifact@v4
         with:
           name: Clean-AdFree-APK
