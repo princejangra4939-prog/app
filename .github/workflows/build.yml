@@ -1,0 +1,41 @@
+name: Build Android APK
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-line: '20'
+
+      - name: Install Mobile Tools
+        run: |
+          mkdir www
+          mv index.html www/
+          npm install @capacitor/core @capacitor/cli
+          npx cap init "My App" "com.yourname.myapp" --web-dir=www
+          npm install @capacitor/android
+          npx cap add android
+          npx cap sync
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Build APK with Gradle
+        run: |
+          cd android
+          ./gradlew assembleDebug
+
+      - name: Upload Clean APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Clean-AdFree-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
