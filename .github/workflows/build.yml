@@ -13,26 +13,28 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Prepare Project Structure
+      - name: Generate Core Native Configuration
         run: |
           mkdir -p www
           cp index.html www/index.html
-          echo '{"name": "clean-html-app", "version": "1.0.0", "dependencies": {}}' > package.json
-          echo '{"appId": "com.cleanhtmlapp.app", "appName": "My App", "webDir": "www"}' > capacitor.config.json
+          echo '{"name": "htmlapp", "version": "1.0.0", "dependencies": {}}' > package.json
+          echo '{"appId": "com.cleanhtmlapp.app", "appName": "My Clean App", "webDir": "www"}' > capacitor.config.json
 
-      - name: Install Tools Non-Interactively
+      - name: Install and Build Platforms Non-Interactively
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android
-          npx cap add android --confirm
-          npx cap sync
+          npx cap add android
 
-      - name: Setup Java
+      - name: Sync and Lock Assets
+        run: npx cap sync
+
+      - name: Setup Java Environments
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Build Pure APK with Gradle
+      - name: Compile Pure APK File
         run: |
           cd android
           chmod +x gradlew
